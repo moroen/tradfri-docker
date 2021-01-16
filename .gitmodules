@@ -1,0 +1,9 @@
+[submodule "IKEA-Tradfri-plugin"]
+	path = IKEA-Tradfri-plugin
+	url = https://github.com/moroen/IKEA-Tradfri-plugin.git
+[submodule "tradfricoap"]
+	path = tradfricoap
+	url = https://github.com/moroen/tradfricoap.git
+[submodule "pycoap"]
+	path = pycoap
+	url = https://github.com/moroen/pycoap.git
