@@ -1,10 +1,11 @@
 FROM moroen/ubuntu-cmake:latest AS builder
 
 ARG MAKE_FLAGS="-j4"
+ARG DOMOTICZ_BRANCH="master"
 
-RUN apt install -y git python3-dev python3-pip libboost-dev libboost-thread-dev libssl-dev curl libcurl4-openssl-dev autoconf automake libtool zlib1g-dev libcereal-dev liblua5.3-dev lua5.3 
+RUN apt install -y git python3-dev python3-pip libboost-dev libboost-thread-dev libssl-dev curl libcurl4-openssl-dev autoconf automake libtool zlib1g-dev libcereal-dev liblua5.3-dev lua5.3 libmosquitto-dev
 
-RUN git clone --depth 1 https://github.com/domoticz/domoticz.git /src/domoticz
+RUN git clone --depth 1 --branch ${DOMOTICZ_BRANCH} https://github.com/domoticz/domoticz.git /src/domoticz
 RUN git clone --depth 1 https://github.com/OpenZWave/open-zwave.git /src/open-zwave-read-only
 
 WORKDIR /src/open-zwave-read-only
@@ -12,13 +13,13 @@ RUN make ${MAKE_FLAGS}
 RUN make install
 
 WORKDIR /src/domoticz
-RUN cmake .
+RUN cmake -DUSE_BUILTIN_MQTT=NO .
 RUN make ${MAKE_FLAGS}
 RUN make install
 
 FROM ubuntu:latest
 COPY --from=builder /opt/domoticz /opt/domoticz
-RUN apt update && apt install -y libssl1.1 libcurl4 python3 python3-dev
+RUN apt update && apt install -y libssl1.1 libcurl4 python3 python3-dev libmosquitto-dev
 
 EXPOSE 8080
 
